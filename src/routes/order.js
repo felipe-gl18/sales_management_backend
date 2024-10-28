@@ -4,4 +4,5 @@ const router = express.Router();
 const orderController = new OrderController();
 router.get("", orderController.getAllOrders);
 router.post("", orderController.createOrder);
+router.delete("/:uuid", orderController.deleteOrder);
 export default router;
