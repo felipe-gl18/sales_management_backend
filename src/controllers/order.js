@@ -16,4 +16,9 @@ export class OrderController {
     await order.deleteOrder(req.params.uuid);
     res.json({ data: [], message: "Pedido deletado" });
   }
+  async updateOrder(req, res) {
+    const order = new OrderService();
+    await order.updateOrder(req.params.uuid, req.body);
+    res.json({ data: [], message: "Pedido alterado" });
+  }
 }

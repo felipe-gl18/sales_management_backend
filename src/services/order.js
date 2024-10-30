@@ -1,50 +1,60 @@
-import fs from "node:fs/promises";
-import { format } from "date-fns";
-import { randomUUID } from "node:crypto";
+import { Order } from "../../database/order.js";
+import { OrderProducts } from "../../database/orderProducts.js";
 export class OrderService {
-  async getAllOrders(month) {
+  async getAllOrders() {
     try {
-      const orders = await this.readJSONFile();
-      const filteredOrders = this.#getByMonth(orders, month);
-      return filteredOrders;
+      const order = new Order("sales_management.db");
+      const orders = await order.selectAllOrders();
+      return orders;
     } catch (error) {
       throw new Error(error);
     }
   }
   async createOrder(newOrder) {
     try {
-      const defaultValues = {
-        uuid: randomUUID(),
-        createdAt: format(new Date(), "dd/MM/yyyy"),
-      };
-      const values = Object.assign(newOrder, defaultValues);
-      const orders = await this.readJSONFile();
-      orders.push(values);
-      await fs.writeFile("database/orders.json", JSON.stringify(orders));
+      const order = new Order("sales_management.db");
+      const orderProducts = new OrderProducts("sales_management.db");
+      const orderName = newOrder["orderName"];
+      const orderPrice = newOrder["orderPrice"];
+      const createdAt = newOrder["createdAt"];
+      const products = newOrder["products"];
+      const createdOrderCode = await order.insertOrder([
+        orderName,
+        orderPrice,
+        createdAt,
+      ]);
+      for (const product in products) {
+        await orderProducts.insertOrderProduct([
+          createdOrderCode,
+          Number(products[product].productCode),
+          Number(products[product].quantity),
+        ]);
+      }
       return;
     } catch (error) {
       throw new Error(error);
     }
   }
-  async deleteOrder(uuid) {
+  async deleteOrder(orderCode) {
     try {
-      const orders = await this.readJSONFile();
-      const newOrders = orders.filter((order) => order.uuid !== uuid);
-      await fs.writeFile("database/orders.json", JSON.stringify(newOrders));
-      return;
+      const orderProducts = new OrderProducts("sales_management.db");
+      const order = new Order("sales_management.db");
+      await order.deleteOrder([orderCode]);
+      await orderProducts.deleteOrderProducts([orderCode]);
     } catch (error) {
       throw new Error(error);
     }
   }
-  #getByMonth(orders, month) {
-    const filteredOrders = orders.filter(
-      (order) => order.createdAt.split("/")[1] == month
-    );
-    return filteredOrders;
-  }
-  async readJSONFile() {
-    const content = await fs.readFile("database/orders.json", "utf-8");
-    const orders = content ? JSON.parse(content) : [];
-    return orders;
+  async updateOrder(orderCode, values) {
+    try {
+      const orderName = values["orderName"];
+      const orderPrice = values["orderPrice"];
+      const createdAt = values["createdAt"];
+      const order = new Order("sales_management.db");
+      await order.updateOrder([orderName, orderPrice, createdAt, orderCode]);
+      return;
+    } catch (error) {
+      throw new Error(error);
+    }
   }
 }
