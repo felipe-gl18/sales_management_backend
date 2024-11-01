@@ -3,7 +3,12 @@ import "dotenv/config.js";
 const { Pool } = pg;
 export class Database {
   constructor() {
-    this.pool = new Pool({ connectionString: process.env.DATABASE });
+    this.pool = new Pool({
+      connectionString: process.env.DATABASE,
+      ssl: {
+        rejectUnauthorized: false,
+      },
+    });
   }
 
   async query(sql, params) {
