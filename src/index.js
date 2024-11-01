@@ -4,12 +4,12 @@ import cors from "cors";
 import order from "./routes/order.js";
 import product from "./routes/product.js";
 import orderProducts from "./routes/ordersProducts.js";
-import { Order } from "../database/order.js";
-import { Product } from "../database/product.js";
+import { Orders } from "../database/orders.js";
+import { Products } from "../database/products.js";
 import { OrderProducts } from "../database/orderProducts.js";
-const orderTable = new Order("sales_management.db");
-const productTable = new Product("sales_management.db");
-const orderProductsTable = new OrderProducts("sales_management.db");
+const orderTable = new Orders();
+const productTable = new Products();
+const orderProductsTable = new OrderProducts();
 (async () => {
   await orderTable.structureOrderTable();
   await productTable.structureProductTable();

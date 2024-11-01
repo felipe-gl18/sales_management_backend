@@ -1,6 +1,5 @@
 import express from "express";
 import { OrderController } from "../controllers/order.js";
-import { Order } from "../../database/order.js";
 const router = express.Router();
 const orderController = new OrderController();
 router.get("", orderController.getAllOrders);

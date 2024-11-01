@@ -1,7 +1,7 @@
 import { OrderProductsService } from "../services/ordersProducts.js";
 export class OrderProductsController {
   async getAllOrderProducts(req, res) {
-    const orderProducts = new OrderProductsService();
+    const orderProducts = new OrderProductsService(req.query.month);
     const orderProductss = await orderProducts.getAllOrderProducts(
       req.query.month
     );

@@ -1,21 +1,20 @@
-import { Product } from "../../database/product.js";
+import { Products } from "../../database/products.js";
+
 export class ProductService {
   async getAllProducts() {
     try {
-      const product = new Product("sales_management.db");
-      const products = await product.selectAllProducts();
-      return products;
+      const products = new Products();
+      const result = await products.selectAllProducts();
+      return result;
     } catch (error) {
       throw new Error(error);
     }
   }
   async createProduct(newProduct) {
     try {
-      const product = new Product("sales_management.db");
-      const productName = newProduct["productName"];
-      const productPrice = newProduct["productPrice"];
-      const productCode = newProduct["productCode"];
-      await product.insertProduct([productName, productPrice, productCode]);
+      const { productname, productprice, productcode } = newProduct;
+      const products = new Products();
+      await products.insertProduct(productname, productprice, productcode);
       return;
     } catch (error) {
       throw new Error(error);
@@ -23,18 +22,17 @@ export class ProductService {
   }
   async deleteProduct(productCode) {
     try {
-      const product = new Product("sales_management.db");
-      await product.deleteProduct([productCode]);
+      const products = new Products();
+      await products.deleteProduct(productCode);
     } catch (error) {
       throw new Error(error);
     }
   }
-  async updateProduct(productCode, values) {
+  async updateProduct(productcode, values) {
     try {
-      const productName = values["productName"];
-      const productPrice = values["productPrice"];
-      const product = new Product("sales_management.db");
-      await product.updateProduct([productName, productPrice, productCode]);
+      const products = new Products();
+      const { productname, productprice } = values;
+      await products.updateProduct(productname, productprice, productcode);
       return;
     } catch (error) {
       throw new Error(error);

@@ -1,9 +1,9 @@
-import { Order } from "../../database/order.js";
 import { OrderProducts } from "../../database/orderProducts.js";
+import { Orders } from "../../database/orders.js";
 export class OrderService {
   async getAllOrders() {
     try {
-      const order = new Order("sales_management.db");
+      const order = new Orders();
       const orders = await order.selectAllOrders();
       return orders;
     } catch (error) {
@@ -12,46 +12,46 @@ export class OrderService {
   }
   async createOrder(newOrder) {
     try {
-      const order = new Order("sales_management.db");
-      const orderProducts = new OrderProducts("sales_management.db");
-      const orderName = newOrder["orderName"];
-      const orderPrice = newOrder["orderPrice"];
+      const order = new Orders();
+      const orderProducts = new OrderProducts();
+      const ordername = newOrder["ordername"];
+      const orderprice = newOrder["orderprice"];
       const createdAt = newOrder["createdAt"];
       const products = newOrder["products"];
-      const createdOrderCode = await order.insertOrder([
-        orderName,
-        orderPrice,
-        createdAt,
-      ]);
+      const ordercode = await order.insertOrder(
+        ordername,
+        orderprice,
+        createdAt
+      );
       for (const product in products) {
-        await orderProducts.insertOrderProduct([
-          createdOrderCode,
-          Number(products[product].productCode),
-          Number(products[product].quantity),
-        ]);
+        await orderProducts.insertOrderProduct(
+          ordercode,
+          Number(products[product].productcode),
+          Number(products[product].quantity)
+        );
       }
       return;
     } catch (error) {
       throw new Error(error);
     }
   }
-  async deleteOrder(orderCode) {
+  async deleteOrder(ordercode) {
     try {
-      const orderProducts = new OrderProducts("sales_management.db");
-      const order = new Order("sales_management.db");
-      await order.deleteOrder([orderCode]);
-      await orderProducts.deleteOrderProducts([orderCode]);
+      const orderProducts = new OrderProducts();
+      const order = new Orders();
+      await order.deleteOrder(ordercode);
+      await orderProducts.deleteOrderProducts(ordercode);
     } catch (error) {
       throw new Error(error);
     }
   }
-  async updateOrder(orderCode, values) {
+  async updateOrder(ordercode, values) {
     try {
-      const orderName = values["orderName"];
-      const orderPrice = values["orderPrice"];
+      const ordername = values["ordername"];
+      const orderprice = values["orderprice"];
       const createdAt = values["createdAt"];
-      const order = new Order("sales_management.db");
-      await order.updateOrder([orderName, orderPrice, createdAt, orderCode]);
+      const order = new Orders();
+      await order.updateOrder(ordername, orderprice, createdAt, ordercode);
       return;
     } catch (error) {
       throw new Error(error);

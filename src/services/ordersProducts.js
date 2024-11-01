@@ -1,9 +1,9 @@
 import { OrderProducts } from "../../database/orderProducts.js";
 export class OrderProductsService {
-  async getAllOrderProducts() {
+  async getAllOrderProducts(month) {
     try {
-      const orderProducts = new OrderProducts("sales_management.db");
-      const orderProductss = await orderProducts.selectOrderWithProducts();
+      const orderProducts = new OrderProducts();
+      const orderProductss = await orderProducts.selectOrderWithProducts(month);
       return orderProductss;
     } catch (error) {
       throw new Error(error);
@@ -11,7 +11,7 @@ export class OrderProductsService {
   }
   async createOrderProducts(newOrderProducts) {
     try {
-      const orderProducts = new OrderProducts("sales_management.db");
+      const orderProducts = new OrderProducts();
       const orderProductsName = newOrderProducts["orderProductsName"];
       const orderProductsPrice = newOrderProducts["orderProductsPrice"];
       const orderProductsCode = newOrderProducts["orderProductsCode"];
